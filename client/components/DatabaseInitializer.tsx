@@ -17,7 +17,7 @@ import {
 import { enhancedAuth } from "@/lib/enhanced-auth";
 import { dualDb } from "@/lib/dual-database";
 import { testNeonConnection } from "@/lib/neon";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { ENV, getDatabaseInfo } from "@/lib/environment";
 
 export default function DatabaseInitializer() {

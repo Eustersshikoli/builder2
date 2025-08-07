@@ -6,7 +6,7 @@ import {
   ReactNode,
 } from "react";
 import { User, Session, AuthError } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { enhancedAuth, EnhancedUserData } from "@/lib/enhanced-auth";
 import { dualDb } from "@/lib/dual-database";
 import { useToast } from "@/hooks/use-toast";

@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { nowPaymentsService } from "@/lib/nowpayments";
 import { investmentService, type Investment } from "@/lib/investment-service";
 import {

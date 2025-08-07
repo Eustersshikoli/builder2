@@ -128,15 +128,13 @@ export default function TelegramSignals() {
       // Generate a temporary password for quick signup
       const tempPassword = Math.random().toString(36).slice(-8) + "!A1";
 
-      const result = await signUp({
-        email,
-        password: tempPassword,
-        fullName: name,
-        country: "US", // Default country
-        phoneNumber: "", // Optional
+      const result = await signUp(email, tempPassword, {
+        full_name: name,
+        country: "US",
+        phone_number: "",
       });
 
-      if (result.success) {
+      if (result.user) {
         toast({
           title: "Success!",
           description:
@@ -148,7 +146,7 @@ export default function TelegramSignals() {
           navigate("/dashboard");
         }, 2000);
       } else {
-        throw new Error(result.error || "Failed to create account");
+        throw new Error(result.error?.message || "Failed to create account");
       }
     } catch (error) {
       toast({
