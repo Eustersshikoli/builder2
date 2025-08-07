@@ -1,0 +1,46 @@
+# Netlify redirects file
+
+# Redirect old paths to new ones
+/testimonials-page /reviews 301
+/review /reviews 301
+/signals /telegramsignals 301
+/telegram /telegramsignals 301
+
+# Admin redirects
+/admin-dashboard /admin-panel 301
+/administration /admin-panel 301
+
+# Dashboard redirects
+/user-dashboard /dashboard 301
+/profile /dashboard 301
+/account /dashboard 301
+
+# Investment redirects
+/investments /investment-plans 301
+/plans /investment-plans 301
+
+# Blog redirects
+/articles /blog 301
+/posts /blog 301
+
+# Education redirects
+/learn /education 301
+/tutorial /education 301
+/tutorials /education 301
+
+# Support redirects
+/help /dashboard?tab=support 301
+/contact /dashboard?tab=support 301
+/support /dashboard?tab=support 301
+
+# Auth redirects - redirect to homepage instead of 404
+/signin /login 301
+/register /signup 301
+/sign-up /signup 301
+/sign-in /login 301
+
+# API redirects for old endpoints
+/api/* /netlify/functions/:splat 200
+
+# SPA fallback - serve index.html for any route not found
+/* /index.html 200

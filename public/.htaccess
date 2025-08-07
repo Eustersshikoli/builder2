@@ -1,0 +1,88 @@
+# Apache .htaccess file for redirects and SPA support
+
+RewriteEngine On
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# HTTPS redirect (if needed)
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Old path redirects
+RewriteRule ^testimonials-page$ /reviews [R=301,L]
+RewriteRule ^review$ /reviews [R=301,L]
+RewriteRule ^signals$ /telegramsignals [R=301,L]
+RewriteRule ^telegram$ /telegramsignals [R=301,L]
+
+# Admin redirects
+RewriteRule ^admin-dashboard$ /admin-panel [R=301,L]
+RewriteRule ^administration$ /admin-panel [R=301,L]
+
+# Dashboard redirects
+RewriteRule ^user-dashboard$ /dashboard [R=301,L]
+RewriteRule ^profile$ /dashboard [R=301,L]
+RewriteRule ^account$ /dashboard [R=301,L]
+
+# Investment redirects
+RewriteRule ^investments$ /investment-plans [R=301,L]
+RewriteRule ^plans$ /investment-plans [R=301,L]
+
+# Blog redirects
+RewriteRule ^articles$ /blog [R=301,L]
+RewriteRule ^posts$ /blog [R=301,L]
+
+# Education redirects
+RewriteRule ^learn$ /education [R=301,L]
+RewriteRule ^tutorial$ /education [R=301,L]
+RewriteRule ^tutorials$ /education [R=301,L]
+
+# Support redirects
+RewriteRule ^help$ /dashboard?tab=support [R=301,L]
+RewriteRule ^contact$ /dashboard?tab=support [R=301,L]
+RewriteRule ^support$ /dashboard?tab=support [R=301,L]
+
+# Auth redirects
+RewriteRule ^signin$ /login [R=301,L]
+RewriteRule ^register$ /signup [R=301,L]
+RewriteRule ^sign-up$ /signup [R=301,L]
+RewriteRule ^sign-in$ /login [R=301,L]
+
+# Handle SPA routing - serve index.html for routes that don't exist as files
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive on
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/jpg "access plus 1 year"
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/gif "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# Compress text files
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+</IfModule>

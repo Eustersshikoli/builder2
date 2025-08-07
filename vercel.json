@@ -1,0 +1,141 @@
+{
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/netlify/functions/$1" }
+  ],
+  "redirects": [
+    {
+      "source": "/testimonials-page",
+      "destination": "/reviews",
+      "permanent": true
+    },
+    {
+      "source": "/review",
+      "destination": "/reviews",
+      "permanent": true
+    },
+    {
+      "source": "/signals",
+      "destination": "/telegramsignals",
+      "permanent": true
+    },
+    {
+      "source": "/telegram",
+      "destination": "/telegramsignals",
+      "permanent": true
+    },
+    {
+      "source": "/admin-dashboard",
+      "destination": "/admin-panel",
+      "permanent": true
+    },
+    {
+      "source": "/administration",
+      "destination": "/admin-panel",
+      "permanent": true
+    },
+    {
+      "source": "/user-dashboard",
+      "destination": "/dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/profile",
+      "destination": "/dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/account",
+      "destination": "/dashboard",
+      "permanent": true
+    },
+    {
+      "source": "/investments",
+      "destination": "/investment-plans",
+      "permanent": true
+    },
+    {
+      "source": "/plans",
+      "destination": "/investment-plans",
+      "permanent": true
+    },
+    {
+      "source": "/articles",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/posts",
+      "destination": "/blog",
+      "permanent": true
+    },
+    {
+      "source": "/learn",
+      "destination": "/education",
+      "permanent": true
+    },
+    {
+      "source": "/tutorial",
+      "destination": "/education",
+      "permanent": true
+    },
+    {
+      "source": "/tutorials",
+      "destination": "/education",
+      "permanent": true
+    },
+    {
+      "source": "/help",
+      "destination": "/dashboard?tab=support",
+      "permanent": true
+    },
+    {
+      "source": "/contact",
+      "destination": "/dashboard?tab=support",
+      "permanent": true
+    },
+    {
+      "source": "/support",
+      "destination": "/dashboard?tab=support",
+      "permanent": true
+    },
+    {
+      "source": "/signin",
+      "destination": "/login",
+      "permanent": true
+    },
+    {
+      "source": "/register",
+      "destination": "/signup",
+      "permanent": true
+    },
+    {
+      "source": "/sign-up",
+      "destination": "/signup",
+      "permanent": true
+    },
+    {
+      "source": "/sign-in",
+      "destination": "/login",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
+}
