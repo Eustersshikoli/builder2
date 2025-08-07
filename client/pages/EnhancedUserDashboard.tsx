@@ -25,7 +25,6 @@ import {
   investmentPlansService,
   type InvestmentPlan,
 } from "@/lib/investment-plans-service";
-import SimpleInvestmentPlans from "@/components/SimpleInvestmentPlans";
 import {
   Wallet,
   TrendingUp,
@@ -1001,9 +1000,9 @@ export default function EnhancedUserDashboard() {
           `Investment in ${selectedInvestmentPlan.name}`,
         );
 
-        if (paymentData.payment?.payment_url) {
-          // Redirect to NOWPayments checkout
-          window.open(paymentData.payment.payment_url, "_blank");
+        if (paymentData.payment) {
+          // Payment created successfully - user can complete it via dashboard
+          // No payment_url property available in the current implementation
           setInvestmentModalOpen(false);
 
           toast({

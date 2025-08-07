@@ -52,6 +52,7 @@ export default function Promo() {
   const handleQuickInvest = (amount: number, expectedReturn: number, roi: string, plan: string) => {
     setCurrentOffer({
       isActive: true,
+      name: plan,
       plan,
       amount,
       expectedReturn,

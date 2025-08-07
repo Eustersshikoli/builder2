@@ -273,7 +273,8 @@ export default function InvestmentPlansCarousel({
       </div>
 
       {/* Custom CSS to ensure no slide transitions */}
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{
+        __html: `
         .investment-plans-carousel {
           /* Ensure no transitions leak to other components */
           isolation: isolate;
@@ -301,7 +302,8 @@ export default function InvestmentPlansCarousel({
             flex: 0 0 100%; /* 1 item on mobile */
           }
         }
-      `}</style>
+        `
+      }} />
     </section>
   );
 }

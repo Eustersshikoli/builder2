@@ -27,7 +27,7 @@ export async function executeNeonQuery<T = any>(
   }
 
   try {
-    const result = await sql(query, params);
+    const result = await sql([query] as any, params);
     return result as T[];
   } catch (error) {
     console.error('Neon query error:', {

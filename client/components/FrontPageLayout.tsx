@@ -151,6 +151,7 @@ export default function FrontPageLayout({ children }: FrontPageLayoutProps) {
 
     setCurrentOffer({
       isActive: true,
+      name: plan,
       plan,
       amount,
       expectedReturn,

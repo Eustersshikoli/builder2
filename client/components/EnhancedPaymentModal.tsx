@@ -136,7 +136,7 @@ export default function EnhancedPaymentModal() {
 
       if (!investmentResult.success) {
         throw new Error(
-          `Failed to create investment: ${investmentResult.error?.message}`,
+          `Failed to create investment: ${investmentResult.error}`,
         );
       }
 

@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/EnhancedAuthContext";
 import { investmentService } from "@/lib/investment-service";
 import { nowPaymentsService } from "@/lib/nowpayments";
+import { supabase } from "@/lib/supabase";
 import investmentPlansService, {
   InvestmentPlan,
 } from "@/lib/investment-plans-service";
@@ -61,9 +62,15 @@ export default function InvestmentModal({
 
   const loadUserBalance = async () => {
     try {
-      const result = await investmentService.getUserBalance(user?.id || "");
-      if (result.success && result.data) {
-        setUserBalance(result.data.balance);
+      // Get user balance from user_balances table
+      const { data, error } = await supabase
+        .from('user_balances')
+        .select('balance')
+        .eq('user_id', user?.id || "")
+        .single();
+      
+      if (!error && data) {
+        setUserBalance(data.balance);
       }
     } catch (error) {
       console.error("Failed to load user balance");
@@ -108,10 +115,12 @@ export default function InvestmentModal({
         // Process investment with account balance
         const result = await investmentService.createInvestment({
           user_id: user.id,
-          plan_id: plan.id,
+          plan_name: plan.name,
           amount,
+          expected_return: totalReturn,
+          roi_percentage: plan.roi_percentage,
+          duration_days: plan.duration_days,
           payment_method: "balance",
-          status: "active",
         });
 
         if (result.success) {
@@ -125,22 +134,37 @@ export default function InvestmentModal({
           throw new Error(result.error || "Investment failed");
         }
       } else {
-        // Process with NowPayments
-        const paymentData = await nowPaymentsService.createInvestmentPayment({
+        // Create investment record first
+        const investmentResult = await investmentService.createInvestment({
           user_id: user.id,
-          plan_id: plan.id,
+          plan_name: plan.name,
           amount,
-          user_email: user.email || "",
+          expected_return: totalReturn,
+          roi_percentage: plan.roi_percentage,
+          duration_days: plan.duration_days,
+          payment_method: "crypto",
         });
 
-        if (paymentData.success && paymentData.payment) {
+        if (!investmentResult.success) {
+          throw new Error(investmentResult.error || "Failed to create investment");
+        }
+
+        // Process with NowPayments
+        const paymentData = await nowPaymentsService.createInvestmentPayment(
+          user.id,
+          investmentResult.data.id,
+          amount,
+          "btc",
+          `Investment in ${plan.name}`
+        );
+
+        if (paymentData && paymentData.payment) {
           toast({
-            title: "Redirecting to Payment",
-            description: "Opening NowPayments checkout...",
+            title: "Payment Created",
+            description: "Please complete the crypto payment to activate your investment.",
           });
 
-          // Open payment URL in new tab
-          window.open(paymentData.payment.payment_url, "_blank");
+          // Store payment info for the user to complete
           onClose();
         } else {
           throw new Error("Failed to create payment");

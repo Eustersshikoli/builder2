@@ -56,6 +56,7 @@ export default function InvestmentPlansStandalone() {
         "Perfect for beginners looking to start their forex investment journey",
       popular: false,
       color: "blue",
+      is_active: true,
       features: [
         "24-32 hour investment period",
         "10X ROI guaranteed",
@@ -75,6 +76,7 @@ export default function InvestmentPlansStandalone() {
       description: "Most popular choice for experienced traders",
       popular: true,
       color: "green",
+      is_active: true,
       features: [
         "24-32 hour investment period",
         "12X ROI guaranteed",
@@ -95,6 +97,7 @@ export default function InvestmentPlansStandalone() {
       description: "For serious investors who want maximum returns",
       popular: false,
       color: "purple",
+      is_active: true,
       features: [
         "24-32 hour investment period",
         "15X ROI guaranteed",

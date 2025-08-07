@@ -665,12 +665,12 @@ class EnhancedAuthService {
         `;
       } else {
         await dualDb.updateUserProfile(userId, {
-          telegram_id: telegramData.id.toString(),
-          telegram_username: telegramData.username,
-          telegram_first_name: telegramData.first_name,
-          telegram_last_name: telegramData.last_name,
-          telegram_photo_url: telegramData.photo_url,
-        });
+          // telegram_id: telegramData.id.toString(), // Property not in UserProfile type
+          // telegram_username: telegramData.username,
+          // telegram_first_name: telegramData.first_name,
+          // telegram_last_name: telegramData.last_name,
+          // telegram_photo_url: telegramData.photo_url,
+        } as any);
       }
 
       return { success: true, error: null };

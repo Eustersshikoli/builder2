@@ -94,7 +94,7 @@ export default function BlogSection({ limit = 6, showHeader = true, featured = f
 
       if (error) throw error;
       
-      const uniqueCategories = [...new Set(data?.map(post => post.category).filter(Boolean))];
+      const uniqueCategories = [...new Set(data?.map(post => post.category).filter(Boolean))] as string[];
       setCategories(uniqueCategories);
     } catch (error) {
       console.error('Error loading categories:', {
