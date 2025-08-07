@@ -234,7 +234,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Check if user is admin
       if (session?.user?.email) {
-        const adminEmails = ["admin@forexsignals.com", "reno@forexsignals.com"]; // Add your admin emails
+        const adminEmails = [
+          "admin@forexsignals.com", 
+          "reno@forexsignals.com",
+          "admin@forextraderssignals.com"
+        ];
         setIsAdmin(adminEmails.includes(session.user.email));
       }
 
@@ -254,7 +258,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(session?.user ?? null);
 
       if (session?.user?.email) {
-        const adminEmails = ["admin@forexsignals.com", "reno@forexsignals.com"];
+        const adminEmails = [
+          "admin@forexsignals.com", 
+          "reno@forexsignals.com",
+          "admin@forextraderssignals.com"
+        ];
         setIsAdmin(adminEmails.includes(session.user.email));
       } else {
         setIsAdmin(false);
@@ -580,7 +588,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     signUp,
     signIn,
     signInWithGoogle,
-    signInWithTelegram,
+    signInWithTelegram: async () => ({ user: null, error: null }) as any, // Placeholder
     signOut,
     resetPassword,
     adminSignIn,
