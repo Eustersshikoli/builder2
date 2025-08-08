@@ -553,7 +553,7 @@ class EnhancedAuthService {
         stack: error instanceof Error ? error.stack : undefined,
         username: username.substring(0, 10) + "...",
       });
-      return false; // Assume taken on error
+      return true; // Defer to server-side uniqueness; allow signup if check fails due to RLS
     }
   }
 
