@@ -67,7 +67,7 @@ export default function Login() {
           ? { email: identifier, password }
           : { email: identifier, password }; // For now, treat as email. We'll enhance this later.
 
-        const { error } = await signIn(identifier, password, rememberMe);
+        const { error } = await signIn(identifier, password);
         if (error) {
           toast({
             title: "Sign in failed",

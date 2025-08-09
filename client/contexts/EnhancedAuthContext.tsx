@@ -369,7 +369,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           redirectTo: `${window.location.origin}/dashboard`,
         },
       });
-      return { user: data.user, error };
+      return { user: null, error }; // OAuth doesn't return user immediately
     } catch (error: any) {
       return { user: null, error };
     }

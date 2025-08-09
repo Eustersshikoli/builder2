@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          author_id: string
+          category: string
+          content: string
+          created_at: string | null
+          excerpt: string | null
+          featured_image: string | null
+          id: string
+          is_published: boolean | null
+          slug: string
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          views: number | null
+        }
+        Insert: {
+          author_id: string
+          category: string
+          content: string
+          created_at?: string | null
+          excerpt?: string | null
+          featured_image?: string | null
+          id?: string
+          is_published?: boolean | null
+          slug: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Update: {
+          author_id?: string
+          category?: string
+          content?: string
+          created_at?: string | null
+          excerpt?: string | null
+          featured_image?: string | null
+          id?: string
+          is_published?: boolean | null
+          slug?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Relationships: []
+      }
       deposits: {
         Row: {
           amount: number
@@ -63,6 +111,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      ebooks: {
+        Row: {
+          author: string | null
+          category: string | null
+          content: string | null
+          cover_image: string | null
+          created_at: string | null
+          description: string | null
+          download_count: number | null
+          file_url: string | null
+          id: string
+          is_active: boolean | null
+          price: number | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          author?: string | null
+          category?: string | null
+          content?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          description?: string | null
+          download_count?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          price?: number | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          author?: string | null
+          category?: string | null
+          content?: string | null
+          cover_image?: string | null
+          created_at?: string | null
+          description?: string | null
+          download_count?: number | null
+          file_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          price?: number | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       forex_signals: {
         Row: {
@@ -151,6 +247,102 @@ export type Database = {
           name?: string
           roi_percentage?: number
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      news_posts: {
+        Row: {
+          author_id: string
+          category: string
+          content: string
+          created_at: string | null
+          excerpt: string | null
+          featured_image: string | null
+          id: string
+          is_published: boolean | null
+          title: string
+          updated_at: string | null
+          views: number | null
+        }
+        Insert: {
+          author_id: string
+          category: string
+          content: string
+          created_at?: string | null
+          excerpt?: string | null
+          featured_image?: string | null
+          id?: string
+          is_published?: boolean | null
+          title: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Update: {
+          author_id?: string
+          category?: string
+          content?: string
+          created_at?: string | null
+          excerpt?: string | null
+          featured_image?: string | null
+          id?: string
+          is_published?: boolean | null
+          title?: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Relationships: []
+      }
+      page_views: {
+        Row: {
+          browser: string | null
+          city: string | null
+          country: string | null
+          created_at: string | null
+          device_type: string | null
+          id: string
+          ip_address: string | null
+          is_mobile: boolean | null
+          operating_system: string | null
+          page_path: string | null
+          page_title: string | null
+          referrer: string | null
+          screen_resolution: string | null
+          user_agent: string | null
+          visited_at: string | null
+        }
+        Insert: {
+          browser?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          ip_address?: string | null
+          is_mobile?: boolean | null
+          operating_system?: string | null
+          page_path?: string | null
+          page_title?: string | null
+          referrer?: string | null
+          screen_resolution?: string | null
+          user_agent?: string | null
+          visited_at?: string | null
+        }
+        Update: {
+          browser?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          ip_address?: string | null
+          is_mobile?: boolean | null
+          operating_system?: string | null
+          page_path?: string | null
+          page_title?: string | null
+          referrer?: string | null
+          screen_resolution?: string | null
+          user_agent?: string | null
+          visited_at?: string | null
         }
         Relationships: []
       }
@@ -526,6 +718,66 @@ export type Database = {
         }
         Relationships: []
       }
+      visitor_analytics: {
+        Row: {
+          browser: string | null
+          city: string | null
+          country: string | null
+          created_at: string | null
+          device_type: string | null
+          id: string
+          ip_address: string | null
+          is_mobile: boolean | null
+          operating_system: string | null
+          page_path: string | null
+          page_title: string | null
+          referrer: string | null
+          screen_resolution: string | null
+          session_duration: number | null
+          session_id: string | null
+          user_agent: string | null
+          visited_at: string | null
+        }
+        Insert: {
+          browser?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          ip_address?: string | null
+          is_mobile?: boolean | null
+          operating_system?: string | null
+          page_path?: string | null
+          page_title?: string | null
+          referrer?: string | null
+          screen_resolution?: string | null
+          session_duration?: number | null
+          session_id?: string | null
+          user_agent?: string | null
+          visited_at?: string | null
+        }
+        Update: {
+          browser?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          ip_address?: string | null
+          is_mobile?: boolean | null
+          operating_system?: string | null
+          page_path?: string | null
+          page_title?: string | null
+          referrer?: string | null
+          screen_resolution?: string | null
+          session_duration?: number | null
+          session_id?: string | null
+          user_agent?: string | null
+          visited_at?: string | null
+        }
+        Relationships: []
+      }
       website_settings: {
         Row: {
           created_at: string | null
@@ -615,6 +867,13 @@ export type Database = {
         Args: { user_id: string; amount: number }
         Returns: boolean
       }
+      assign_user_role: {
+        Args: {
+          p_user_id: string
+          p_role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: boolean
+      }
       auto_complete_investments: {
         Args: Record<PropertyKey, never>
         Returns: number
@@ -622,6 +881,14 @@ export type Database = {
       complete_investment: {
         Args: { p_investment_id: string }
         Returns: boolean
+      }
+      create_admin_user: {
+        Args: {
+          p_email: string
+          p_password: string
+          p_role?: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: Json
       }
       create_investment: {
         Args: { p_user_id: string; p_plan_id: string; p_amount: number }
@@ -638,8 +905,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_post_views: {
+        Args: { post_id: string }
+        Returns: undefined
+      }
       process_referral_commission: {
         Args: { p_referred_user_id: string; p_investment_amount: number }
+        Returns: boolean
+      }
+      setup_initial_super_admin: {
+        Args: { p_user_id: string }
         Returns: boolean
       }
       subtract_from_balance: {
