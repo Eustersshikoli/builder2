@@ -483,9 +483,9 @@ class DualDatabaseService {
           .from('user_profiles')
           .select('*')
           .eq('email', email)
-          .single();
+          .maybeSingle();
         
-        if (error && error.code !== 'PGRST116') throw error;
+        if (error) throw error;
         return data;
       }
     } catch (error) {
@@ -494,7 +494,7 @@ class DualDatabaseService {
         message: error instanceof Error ? error.message : 'Unknown error',
         email
       });
-      throw error;
+      return null; // Return null instead of throwing, so validation can proceed
     }
   }
 

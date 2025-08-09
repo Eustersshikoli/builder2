@@ -577,7 +577,7 @@ class EnhancedAuthService {
         stack: error instanceof Error ? error.stack : undefined,
         email,
       });
-      return false; // Assume taken on error
+      return true; // Allow registration if validation fails - better UX
     }
   }
 

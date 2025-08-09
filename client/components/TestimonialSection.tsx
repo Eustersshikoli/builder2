@@ -86,7 +86,12 @@ export default function TestimonialSection({
       const { data, error } = await query;
 
       if (error) throw error;
-      setTestimonials(data || []);
+      setTestimonials(data?.map(item => ({
+        ...item,
+        user_id: item.id,
+        avatar_url: '',
+        location: item.country || ''
+      })) || []);
     } catch (error) {
       console.error('Error loading testimonials:', {
         message: error instanceof Error ? error.message : 'Unknown error',
@@ -443,7 +448,12 @@ export function FloatingTestimonial() {
         .limit(3);
 
       if (error) throw error;
-      setTestimonials(data || []);
+      setTestimonials(data?.map(item => ({
+        ...item,
+        user_id: item.id,
+        avatar_url: '',
+        location: item.country || ''
+      })) || []);
     } catch (error) {
       console.error('Error loading featured testimonials:', {
         message: error instanceof Error ? error.message : 'Unknown error',
