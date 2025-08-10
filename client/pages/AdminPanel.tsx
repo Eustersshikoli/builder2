@@ -237,14 +237,8 @@ export default function AdminPanel() {
   const loadEbooks = async () => {
     try {
       setLoading(true);
-      // Ebooks table access - using type assertion until types are updated
-      const { data, error } = await (supabase as any)
-        .from("ebooks")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setEbooks(data || []);
+      // Skip ebooks for now since table doesn't exist in current schema
+      setEbooks([]);
     } catch (error) {
       toast({
         title: "Error",
@@ -259,14 +253,8 @@ export default function AdminPanel() {
   const loadBlogPosts = async () => {
     try {
       setLoading(true);
-      // Blog posts table access - using type assertion until types are updated
-      const { data, error } = await (supabase as any)
-        .from("blog_posts")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setBlogPosts(data || []);
+      // Skip blog posts for now since table doesn't exist in current schema
+      setBlogPosts([]);
     } catch (error) {
       toast({
         title: "Error",
@@ -312,11 +300,7 @@ export default function AdminPanel() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-        setUsers(data?.map(item => ({
-          ...item,
-          kyc_status: 'pending',
-          is_admin: false
-        })) || []);
+        setUsers(data || []);
     } catch (error) {
       toast({
         title: "Error",
