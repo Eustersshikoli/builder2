@@ -1,4 +1,4 @@
-import { supabase } from './supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { executeNeonQuery, sql } from './neon';
 
 export interface UserProfile {

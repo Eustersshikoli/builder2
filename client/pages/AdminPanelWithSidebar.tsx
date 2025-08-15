@@ -187,7 +187,10 @@ export default function AdminPanelWithSidebar() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setUsers(data || []);
+      setUsers((data || []).map((user: any) => ({
+        ...user,
+        kyc_status: user.kyc_status || 'pending'
+      })));
     } catch (error) {
       toast({
         title: "Error",
@@ -202,13 +205,9 @@ export default function AdminPanelWithSidebar() {
   const loadEbooks = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("ebooks")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setEbooks(data || []);
+      // Skip ebooks until table is available
+      setEbooks([]);
+      console.log('Ebooks functionality will be available after database migration');
     } catch (error) {
       toast({
         title: "Error",
@@ -223,13 +222,9 @@ export default function AdminPanelWithSidebar() {
   const loadBlogPosts = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setBlogPosts(data || []);
+      // Skip blog posts until table is available
+      setBlogPosts([]);
+      console.log('Blog posts functionality will be available after database migration');
     } catch (error) {
       toast({
         title: "Error",
@@ -250,7 +245,11 @@ export default function AdminPanelWithSidebar() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setTestimonials(data || []);
+      setTestimonials((data || []).map((testimonial: any) => ({
+        ...testimonial,
+        avatar_url: testimonial.avatar_url || '',
+        location: testimonial.location || testimonial.country || ''
+      })));
     } catch (error) {
       toast({
         title: "Error",

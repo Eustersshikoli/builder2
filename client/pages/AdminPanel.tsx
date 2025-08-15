@@ -407,8 +407,10 @@ const AdminPanel = () => {
   const loadSignals = async () => {
     try {
       setLoading(true);
-      const data = await signalsService.getAllSignals();
-      setSignals(data);
+      const result = await signalsService.getAllSignals();
+      if (result.success && result.data) {
+        setSignals(result.data);
+      }
     } catch (error) {
       toast({
         title: "Error",
