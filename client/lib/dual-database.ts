@@ -320,7 +320,10 @@ class DualDatabaseService {
           .single();
         
         if (error) throw error;
-        return data;
+        return {
+          ...data,
+          type: data.type as "deposit" | "withdrawal" | "investment" | "return" | "referral_commission"
+        } as Transaction;
       }
     } catch (error) {
       console.error('Error creating transaction:', {
@@ -351,7 +354,10 @@ class DualDatabaseService {
           .limit(limit);
         
         if (error) throw error;
-        return data || [];
+        return (data || []).map((transaction: any) => ({
+          ...transaction,
+          type: transaction.type as "deposit" | "withdrawal" | "investment" | "return" | "referral_commission"
+        })) as Transaction[];
       }
     } catch (error) {
       console.error('Error getting user transactions:', {
@@ -390,7 +396,10 @@ class DualDatabaseService {
           .single();
         
         if (error) throw error;
-        return data;
+        return {
+          ...data,
+          status: data.status as "active" | "completed" | "cancelled"
+        } as Investment;
       }
     } catch (error) {
       console.error('Error creating investment:', {
@@ -428,7 +437,11 @@ class DualDatabaseService {
           .order('created_at', { ascending: false });
         
         if (error) throw error;
-        return data || [];
+        return (data || []).map((investment: any) => ({
+          ...investment,
+          status: investment.status as "active" | "completed" | "cancelled",
+          plan_name: investment.investment_plans?.name || 'Unknown Plan'
+        })) as Investment[];
       }
     } catch (error) {
       console.error('Error getting user investments:', {

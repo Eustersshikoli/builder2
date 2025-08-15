@@ -107,7 +107,11 @@ class InvestmentPlansService {
       // Use default plans if database is not configured or empty
       const plans = data && data.length > 0 ? data : this.defaultPlans;
 
-      return { success: true, data: plans };
+      return { success: true, data: (plans || []).map((plan: any) => ({
+        ...plan,
+        is_featured: plan.is_featured || false,
+        features: plan.features || []
+      })) };
     } catch (error) {
       logger.error("Failed to load investment plans", {
         message: error instanceof Error ? error.message : "Unknown error",

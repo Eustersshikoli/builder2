@@ -63,7 +63,13 @@ export default function ForexSignalsDashboard() {
       const result = await signalsService.getActiveSignals();
 
       if (result.success) {
-        setSignals(result.data);
+        setSignals(result.data.map((signal: any) => ({
+          ...signal,
+          pair: signal.currency_pair,
+          take_profit_1: signal.take_profit,
+          confidence: parseFloat(signal.confidence_level) || 75,
+          created_by: 'system'
+        })));
         setLastUpdate(new Date());
       } else {
         throw new Error("Failed to load signals");
