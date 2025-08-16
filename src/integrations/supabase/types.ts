@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
@@ -864,13 +864,13 @@ export type Database = {
     }
     Functions: {
       add_to_balance: {
-        Args: { user_id: string; amount: number }
+        Args: { amount: number; user_id: string }
         Returns: boolean
       }
       assign_user_role: {
         Args: {
-          p_user_id: string
           p_role: Database["public"]["Enums"]["app_role"]
+          p_user_id: string
         }
         Returns: boolean
       }
@@ -891,7 +891,7 @@ export type Database = {
         Returns: Json
       }
       create_investment: {
-        Args: { p_user_id: string; p_plan_id: string; p_amount: number }
+        Args: { p_amount: number; p_plan_id: string; p_user_id: string }
         Returns: string
       }
       get_user_stats: {
@@ -900,8 +900,8 @@ export type Database = {
       }
       has_role: {
         Args: {
-          _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
         }
         Returns: boolean
       }
@@ -910,7 +910,7 @@ export type Database = {
         Returns: undefined
       }
       process_referral_commission: {
-        Args: { p_referred_user_id: string; p_investment_amount: number }
+        Args: { p_investment_amount: number; p_referred_user_id: string }
         Returns: boolean
       }
       setup_initial_super_admin: {
@@ -918,7 +918,7 @@ export type Database = {
         Returns: boolean
       }
       subtract_from_balance: {
-        Args: { user_id: string; amount: number }
+        Args: { amount: number; user_id: string }
         Returns: boolean
       }
     }

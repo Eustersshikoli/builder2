@@ -53,14 +53,10 @@ class InvestmentService {
         .from("user_investments")
         .insert({
           user_id: investmentData.user_id,
-          plan_name: investmentData.plan_name,
+          plan_id: investmentData.plan_id || 'starter', // Add plan_id
           amount: investmentData.amount,
           expected_return: investmentData.expected_return,
-          roi_percentage: investmentData.roi_percentage,
-          duration_days: investmentData.duration_days,
           status: "pending",
-          payment_status: "pending",
-          payment_method: investmentData.payment_method,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })
@@ -96,8 +92,6 @@ class InvestmentService {
       const { data, error } = await supabase
         .from("user_investments")
         .update({
-          payment_address: paymentDetails.crypto_address,
-          payment_transaction_id: paymentDetails.transaction_id,
           updated_at: new Date().toISOString(),
         })
         .eq("id", investmentId)
@@ -141,9 +135,7 @@ class InvestmentService {
       const { data, error } = await supabase
         .from("user_investments")
         .update({
-          payment_status: "confirmed",
           status: "active",
-          payment_transaction_id: transactionId,
           start_date: startDate.toISOString(),
           end_date: endDate.toISOString(),
           updated_at: new Date().toISOString(),
@@ -163,8 +155,7 @@ class InvestmentService {
         type: "investment",
         amount: investment.data.amount,
         status: "completed",
-        description: `Investment in ${investment.data.plan_name}`,
-        investment_id: investmentId,
+        description: `Investment created`,
       });
 
       logger.info("Payment confirmed successfully", { investmentId });
@@ -209,11 +200,18 @@ class InvestmentService {
    */
   async getUserInvestments(userId: string) {
     try {
-      const { data, error } = await supabase
-        .from("user_investments")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false });
+      const { data: investments, error } = await supabase
+        .from('user_investments')
+        .select(`
+          *,
+          investment_plans (
+            name,
+            roi_percentage,
+            duration_days
+          )
+        `)
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
 
       if (error) {
         logger.error("Failed to get user investments", {
@@ -222,7 +220,12 @@ class InvestmentService {
         throw error;
       }
 
-      return { success: true, data: data || [] };
+      return { success: true, data: investments?.map(investment => ({
+        ...investment,
+        plan_name: investment.investment_plans?.name || 'Unknown Plan',
+        roi_percentage: investment.investment_plans?.roi_percentage || 0,
+        days_remaining: Math.max(0, Math.ceil((new Date(investment.start_date).getTime() + ((investment.investment_plans?.duration_days || 0) * 24 * 60 * 60 * 1000) - Date.now()) / (24 * 60 * 60 * 1000)))
+      })) || [] };
     } catch (error) {
       logger.error("Get user investments error", {
         message: error instanceof Error ? error.message : 'Unknown error',
@@ -269,8 +272,7 @@ class InvestmentService {
         type: "payout",
         amount: finalReturn,
         status: "completed",
-        description: `ROI payout for ${investment.data.plan_name}`,
-        investment_id: investmentId,
+        description: `ROI payout`,
       });
 
       // Update user balance
@@ -299,10 +301,9 @@ class InvestmentService {
     amount: number;
     status: "pending" | "completed" | "failed";
     description: string;
-    investment_id?: string;
   }) {
     try {
-      const { error } = await supabase.from("payment_transactions").insert({
+      const { error } = await supabase.from("transactions").insert({
         ...transactionData,
         created_at: new Date().toISOString(),
       });

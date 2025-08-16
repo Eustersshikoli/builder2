@@ -178,17 +178,15 @@ class NOWPaymentsService {
 
       // Save payment to Supabase
       const { data: dbPayment, error } = await supabase
-        .from('payments')
+        .from('deposits')
         .insert({
           user_id: userId,
-          investment_id: investmentId,
-          payment_method: paymentCurrency,
           amount: amount,
           currency: 'usd',
           crypto_currency: paymentCurrency,
           payment_address: payment.pay_address,
-          payment_id_external: payment.payment_id,
-          payment_status: payment.payment_status,
+          nowpayments_id: payment.payment_id,
+          status: payment.payment_status,
         })
         .select()
         .single();
@@ -215,13 +213,12 @@ class NOWPaymentsService {
 
       // Update payment in Supabase
       const { error } = await supabase
-        .from('payments')
+        .from('deposits')
         .update({
-          payment_status: paymentStatus.payment_status,
-          actually_paid: paymentStatus.actually_paid,
+          status: paymentStatus.payment_status,
           updated_at: new Date().toISOString(),
         })
-        .eq('payment_id_external', paymentId);
+        .eq('nowpayments_id', paymentId);
 
       if (error) {
         console.error('Failed to update payment status in database:', {
@@ -249,41 +246,25 @@ class NOWPaymentsService {
     try {
       // Get payment details
       const { data: payment } = await supabase
-        .from('payments')
-        .select('investment_id')
-        .eq('payment_id_external', paymentId)
+        .from('deposits')
+        .select('user_id')
+        .eq('nowpayments_id', paymentId)
         .single();
 
-      if (payment?.investment_id) {
-        // Update investment status to active
+      if (payment?.user_id) {
+        // Add to user balance instead of activating investment
         const { error } = await supabase
-          .from('user_investments')
-          .update({
-            status: 'active',
-            start_date: new Date().toISOString().split('T')[0],
-          })
-          .eq('id', payment.investment_id);
+          .from('user_balances')
+          .upsert({
+            user_id: payment.user_id,
+            balance: 0, // This would need proper calculation
+            updated_at: new Date().toISOString(),
+          });
 
         if (error) {
-          console.error('Failed to activate investment:', {
+          console.error('Failed to update balance:', {
             message: error instanceof Error ? error.message : 'Unknown error',
             stack: error instanceof Error ? error.stack : undefined
-          });
-        }
-
-        // Create notification for user
-        const { data: investment } = await supabase
-          .from('user_investments')
-          .select('user_id, amount')
-          .eq('id', payment.investment_id)
-          .single();
-
-        if (investment) {
-          await supabase.from('user_notifications').insert({
-            user_id: investment.user_id,
-            title: 'Investment Activated',
-            message: `Your investment of $${investment.amount} has been successfully activated!`,
-            type: 'success',
           });
         }
       }

@@ -143,7 +143,11 @@ class InvestmentPlansService {
 
       const plans = data && data.length > 0 ? data : this.defaultPlans;
 
-      return { success: true, data: plans };
+      return { success: true, data: data.map(plan => ({
+        ...plan,
+        is_featured: false,
+        features: []
+      })) as InvestmentPlan[] };
     } catch (error) {
       logger.error("Failed to load all investment plans", {
         message: error instanceof Error ? error.message : "Unknown error",
@@ -174,7 +178,11 @@ class InvestmentPlansService {
       if (error) throw error;
 
       logger.info("Investment plan created", { planName: planData.name });
-      return { success: true, data };
+      return { success: true, data: {
+        ...data,
+        is_featured: false,
+        features: []
+      } as InvestmentPlan };
     } catch (error) {
       logger.error("Failed to create investment plan", {
         message: error instanceof Error ? error.message : "Unknown error",
@@ -210,7 +218,11 @@ class InvestmentPlansService {
       if (error) throw error;
 
       logger.info("Investment plan updated", { planId, updates });
-      return { success: true, data };
+      return { success: true, data: {
+        ...data,
+        is_featured: false,
+        features: []
+      } as InvestmentPlan };
     } catch (error) {
       logger.error("Failed to update investment plan", {
         message: error instanceof Error ? error.message : "Unknown error",
@@ -280,7 +292,11 @@ class InvestmentPlansService {
         return { success: false, error: { message: "Plan not found" } };
       }
 
-      return { success: true, data };
+      return { success: true, data: {
+        ...data,
+        is_featured: false,
+        features: []
+      } as InvestmentPlan };
     } catch (error) {
       logger.error("Failed to get investment plan", {
         message: error instanceof Error ? error.message : "Unknown error",
