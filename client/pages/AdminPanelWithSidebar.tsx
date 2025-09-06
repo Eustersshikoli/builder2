@@ -436,7 +436,7 @@ export default function AdminPanelWithSidebar() {
               </Button>
             </div>
 
-            {activeTab === "create-signal" ? (
+            {activeTab === "signals" ? (
               <Card>
                 <CardHeader>
                   <CardTitle>Create New Signal</CardTitle>

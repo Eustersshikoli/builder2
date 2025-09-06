@@ -36,6 +36,29 @@ export interface SignalAnalytics {
   }>;
 }
 
+// Transform database signal to ForexSignal
+function transformDatabaseSignal(dbSignal: any): ForexSignal {
+  return {
+    id: dbSignal.id,
+    pair: dbSignal.currency_pair,
+    signal_type: dbSignal.signal_type as "buy" | "sell",
+    entry_price: dbSignal.entry_price,
+    stop_loss: dbSignal.stop_loss || 0,
+    take_profit_1: dbSignal.take_profit || 0,
+    take_profit_2: undefined,
+    take_profit_3: undefined,
+    confidence: parseInt(dbSignal.confidence_level || '50'),
+    analysis: dbSignal.analysis || '',
+    status: dbSignal.status as "active" | "closed" | "cancelled",
+    result: dbSignal.status === 'closed' ? 'win' : undefined,
+    close_price: dbSignal.exit_price,
+    pips_gained: dbSignal.pips_result,
+    created_at: dbSignal.created_at,
+    closed_at: dbSignal.updated_at,
+    created_by: 'system',
+  };
+}
+
 class SignalsService {
   /**
    * Create a new forex signal
@@ -62,7 +85,13 @@ class SignalsService {
       const { data, error } = await supabase
         .from("forex_signals")
         .insert({
-          ...signalData,
+          currency_pair: signalData.pair,
+          signal_type: signalData.signal_type,
+          entry_price: signalData.entry_price,
+          stop_loss: signalData.stop_loss,
+          take_profit: signalData.take_profit_1,
+          confidence_level: signalData.confidence.toString(),
+          analysis: signalData.analysis,
           status: "active",
           created_at: new Date().toISOString(),
         })
@@ -74,11 +103,13 @@ class SignalsService {
         throw error;
       }
 
+      const signal = transformDatabaseSignal(data);
+      
       // Send Telegram notification
-      await this.sendTelegramSignal(data);
+      await this.sendTelegramSignal(signal);
 
       logger.info("Signal created successfully", { signalId: data.id });
-      return { success: true, data };
+      return { success: true, data: signal };
     } catch (error) {
       logger.error("Signal creation error", {
         message: error instanceof Error ? error.message : 'Unknown error',
@@ -104,7 +135,7 @@ class SignalsService {
         throw error;
       }
 
-      return { success: true, data: data || [] };
+      return { success: true, data: (data || []).map(transformDatabaseSignal) };
     } catch (error) {
       logger.error("Get active signals error", {
         message: error instanceof Error ? error.message : 'Unknown error',
@@ -138,7 +169,7 @@ class SignalsService {
 
       return {
         success: true,
-        data: data || [],
+        data: (data || []).map(transformDatabaseSignal),
         count: count || 0,
         totalPages: Math.ceil((count || 0) / limit),
       };
@@ -170,10 +201,9 @@ class SignalsService {
         .from("forex_signals")
         .update({
           status: "closed",
-          result: result.result,
-          close_price: result.close_price,
-          pips_gained: result.pips_gained,
-          closed_at: new Date().toISOString(),
+          exit_price: result.close_price,
+          pips_result: result.pips_gained,
+          updated_at: new Date().toISOString(),
         })
         .eq("id", signalId)
         .select()
@@ -184,11 +214,13 @@ class SignalsService {
         throw error;
       }
 
+      const signal = transformDatabaseSignal(data);
+      
       // Send Telegram update
-      await this.sendTelegramSignalUpdate(data);
+      await this.sendTelegramSignalUpdate(signal);
 
       logger.info("Signal closed successfully", { signalId });
-      return { success: true, data };
+      return { success: true, data: signal };
     } catch (error) {
       logger.error("Signal close error", {
         message: error instanceof Error ? error.message : 'Unknown error',
@@ -220,9 +252,9 @@ class SignalsService {
         throw error;
       }
 
-      const signals = data || [];
+      const signals = (data || []).map(transformDatabaseSignal);
       const closedSignals = signals.filter((s) => s.status === "closed");
-      const winningSignals = closedSignals.filter((s) => s.result === "win");
+      const winningSignals = closedSignals.filter((s) => s.status === "closed" && (s.pips_gained || 0) > 0);
 
       // Calculate analytics
       const analytics: SignalAnalytics = {
@@ -271,7 +303,7 @@ class SignalsService {
         throw error;
       }
 
-      return { success: true, data: data || [] };
+      return { success: true, data: (data || []).map(transformDatabaseSignal) };
     } catch (error) {
       logger.error("Get recent signals error", {
         message: error instanceof Error ? error.message : 'Unknown error',
@@ -288,12 +320,25 @@ class SignalsService {
     try {
       logger.info("Updating signal", { signalId });
 
+      // Transform ForexSignal updates to database format
+      const dbUpdates: any = {
+        updated_at: new Date().toISOString(),
+      };
+
+      if (updates.pair) dbUpdates.currency_pair = updates.pair;
+      if (updates.signal_type) dbUpdates.signal_type = updates.signal_type;
+      if (updates.entry_price) dbUpdates.entry_price = updates.entry_price;
+      if (updates.stop_loss) dbUpdates.stop_loss = updates.stop_loss;
+      if (updates.take_profit_1) dbUpdates.take_profit = updates.take_profit_1;
+      if (updates.confidence) dbUpdates.confidence_level = updates.confidence.toString();
+      if (updates.analysis) dbUpdates.analysis = updates.analysis;
+      if (updates.status) dbUpdates.status = updates.status;
+      if (updates.close_price) dbUpdates.exit_price = updates.close_price;
+      if (updates.pips_gained) dbUpdates.pips_result = updates.pips_gained;
+
       const { data, error } = await supabase
         .from("forex_signals")
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
+        .update(dbUpdates)
         .eq("id", signalId)
         .select()
         .single();
@@ -303,7 +348,7 @@ class SignalsService {
         throw error;
       }
 
-      return { success: true, data };
+      return { success: true, data: transformDatabaseSignal(data) };
     } catch (error) {
       logger.error("Signal update error", {
         message: error instanceof Error ? error.message : 'Unknown error',
@@ -324,7 +369,7 @@ class SignalsService {
         .from("forex_signals")
         .update({
           status: "cancelled",
-          closed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
         })
         .eq("id", signalId)
         .select()
@@ -335,7 +380,7 @@ class SignalsService {
         throw error;
       }
 
-      return { success: true, data };
+      return { success: true, data: transformDatabaseSignal(data) };
     } catch (error) {
       logger.error("Signal cancel error", {
         message: error instanceof Error ? error.message : 'Unknown error',
@@ -497,13 +542,13 @@ ${signal.pips_gained ? `📈 Pips: ${signal.pips_gained > 0 ? "+" : ""}${signal.
 
       performance.push({
         date: dateStr,
-        wins: daySignals.filter((s) => s.result === "win").length,
-        losses: daySignals.filter((s) => s.result === "loss").length,
+        wins: daySignals.filter((s) => (s.pips_gained || 0) > 0).length,
+        losses: daySignals.filter((s) => (s.pips_gained || 0) <= 0).length,
         pips: daySignals.reduce((sum, s) => sum + (s.pips_gained || 0), 0),
       });
     }
 
-    return performance.reverse();
+    return performance.reverse(); // Show chronological order
   }
 }
 
