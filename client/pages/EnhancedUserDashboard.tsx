@@ -557,7 +557,14 @@ export default function EnhancedUserDashboard() {
         user.id,
       );
       if (investmentsResult.success) {
-        setUserInvestments(investmentsResult.data);
+        // Map data to match Investment interface
+        const mappedInvestments = investmentsResult.data.map((investment: any) => ({
+          ...investment,
+          duration_days: investment.duration_days || 0,
+          payment_status: investment.payment_status || 'pending',
+          payment_method: investment.payment_method || 'crypto',
+        }));
+        setUserInvestments(mappedInvestments);
       }
 
       // Load investment stats
@@ -864,23 +871,8 @@ export default function EnhancedUserDashboard() {
 
       if (error) throw error;
 
-      // Create notification for admin (if notifications table exists)
-      try {
-        await supabase.from("admin_notifications").insert({
-          type: "support_ticket",
-          title: `New Support Ticket: ${supportTicket.subject}`,
-          message: `${user.email} created a new ${supportTicket.category} ticket`,
-          reference_id: data.id,
-          is_read: false,
-          created_at: new Date().toISOString(),
-        });
-      } catch (notifError) {
-        // Notification creation is optional - don't fail the ticket creation
-        console.warn("Could not create admin notification:", {
-          message:
-            notifError instanceof Error ? notifError.message : "Unknown error",
-        });
-      }
+      // Admin notifications table doesn't exist, so skip notification creation
+      console.info("Support ticket created successfully - admin notifications disabled");
 
       toast({
         title: "Ticket Created Successfully",
