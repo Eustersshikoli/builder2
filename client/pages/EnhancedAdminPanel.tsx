@@ -310,15 +310,10 @@ export default function EnhancedAdminPanel() {
   const loadNewsPosts = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("news_posts")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error && error.code !== "42P01") throw error;
-      setNewsPosts(data || []);
+      // News posts table doesn't exist, so set empty array
+      setNewsPosts([]);
     } catch (error) {
-      console.warn("News posts table not found, using empty data");
+      console.warn("News posts functionality disabled");
       setNewsPosts([]);
     } finally {
       setLoading(false);
@@ -334,7 +329,13 @@ export default function EnhancedAdminPanel() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setTestimonials(data || []);
+      // Map database data to match interface
+      const mappedTestimonials = (data || []).map((testimonial: any) => ({
+        ...testimonial,
+        avatar_url: testimonial.avatar_url || '',
+        location: testimonial.country || testimonial.location || '',
+      }));
+      setTestimonials(mappedTestimonials);
     } catch (error) {
       toast({
         title: "Error",
@@ -360,7 +361,12 @@ export default function EnhancedAdminPanel() {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setSupportTickets(data || []);
+      // Map database data to match interface
+      const mappedTickets = (data || []).map((ticket: any) => ({
+        ...ticket,
+        message: ticket.description || '', // Use description as message
+      }));
+      setSupportTickets(mappedTickets);
     } catch (error) {
       toast({
         title: "Error",
@@ -375,16 +381,10 @@ export default function EnhancedAdminPanel() {
   const loadSiteErrors = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("site_errors")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(100);
-
-      if (error && error.code !== "42P01") throw error;
-      setSiteErrors(data || []);
+      // Site errors table doesn't exist, so set empty array
+      setSiteErrors([]);
     } catch (error) {
-      console.warn("Site errors table not found, using empty data");
+      console.warn("Site errors functionality disabled");
       setSiteErrors([]);
     } finally {
       setLoading(false);
@@ -412,30 +412,13 @@ export default function EnhancedAdminPanel() {
   const createNewsPost = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("news_posts")
-        .insert({
-          ...newsForm,
-          created_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-
+      
       toast({
-        title: "Success",
-        description: "News post created successfully",
+        title: "Info",
+        description: "News posts functionality is not available",
+        variant: "default",
       });
-      setNewsForm({
-        title: "",
-        content: "",
-        excerpt: "",
-        featured_image_url: "",
-        is_published: false,
-        is_breaking: false,
-      });
-      loadNewsPosts();
+      
     } catch (error) {
       toast({
         title: "Error",
@@ -550,18 +533,12 @@ export default function EnhancedAdminPanel() {
 
   const markErrorResolved = async (errorId: string) => {
     try {
-      const { error } = await supabase
-        .from("site_errors")
-        .update({ resolved: true })
-        .eq("id", errorId);
-
-      if (error) throw error;
-
+      // Site errors functionality disabled
       toast({
-        title: "Success",
-        description: "Error marked as resolved",
+        title: "Info",
+        description: "Site errors functionality is not available",
+        variant: "default",
       });
-      loadSiteErrors();
     } catch (error) {
       toast({
         title: "Error",
@@ -824,7 +801,7 @@ export default function EnhancedAdminPanel() {
               </Button>
             </div>
 
-            {activeTab === "create-news" ? (
+            {activeTab === "news" ? (
               <Card>
                 <CardHeader>
                   <CardTitle>Create News Post</CardTitle>
@@ -1021,7 +998,7 @@ export default function EnhancedAdminPanel() {
               </Button>
             </div>
 
-            {activeTab === "create-investment" ? (
+            {activeTab === "investments" ? (
               <Card>
                 <CardHeader>
                   <CardTitle>Create Investment Plan</CardTitle>
@@ -1567,7 +1544,7 @@ export default function EnhancedAdminPanel() {
               </Button>
             </div>
 
-            {activeTab === "create-signal" ? (
+            {activeTab === "signals" ? (
               <Card>
                 <CardHeader>
                   <CardTitle>Create New Signal</CardTitle>
